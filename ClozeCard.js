@@ -32,7 +32,8 @@ ClozeCard.prototype.writeInfo = function() {
 }
 
 ClozeCard.readInfo = function () {
-    debugger;
+    // debugger;
+    var truthy = true;
     if (ClozeCards.length > 0) { 
         fs.readFile("cloze.json","utf8", function(err,data) {
             if(err){
@@ -64,9 +65,11 @@ ClozeCard.readInfo = function () {
                 }
             }
         })
+        return truthy = true;
     } else {
         console.log("-----------------------" + "\n" +"*****you haven't written any cards yet! returning to main menu.*****" + "\n" + "-----------------------");
-        return admin.mainTree();
+        return truthy = false;
+        // return admin.mainTree();
     }
 }
 

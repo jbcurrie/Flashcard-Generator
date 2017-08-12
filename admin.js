@@ -105,8 +105,9 @@ function cardReader() {
         }
     ]).then(function(read) { 
         if (read.card === "basic card") {
-            var run
-            BasicCard.readInfo();
+            // var run
+            if (BasicCard.readInfo() === true) {
+
                 setTimeout(function () {    
                     inquirer.prompt([
                         {
@@ -123,26 +124,31 @@ function cardReader() {
                         }
                     });
                 },1000);
-                
+            } else {
+                module.exports.mainTree();
+            }
         }
         if (read.card === "cloze card") { 
-            ClozeCard.readInfo();
-            setTimeout(function () {
-                inquirer.prompt([
-                    {
-                        type:"input",
-                        name:"answer",
-                        message:"Enter your answer:"
-                    }
-                ]).then(function(response) {
-                    if (response.answer) {
-                        ClozeCard.readInfo();
-                        setTimeout(function () {
-                            return cardReader();
-                        },1000);
-                    }
-                })
-            },1000);
+            if (ClozeCard.readInfo() === true) {
+                setTimeout(function () {
+                    inquirer.prompt([
+                        {
+                            type:"input",
+                            name:"answer",
+                            message:"Enter your answer:"
+                        }
+                    ]).then(function(response) {
+                        if (response.answer) {
+                            ClozeCard.readInfo();
+                            setTimeout(function () {
+                                return cardReader();
+                            },1000);
+                        }
+                    })
+                },1000);
+            } else {
+                module.exports.mainTree();
+            }
         };
         if (read.card === "main menu") {
             module.exports.mainTree();

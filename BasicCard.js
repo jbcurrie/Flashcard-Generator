@@ -17,12 +17,13 @@ BasicCard.prototype.writeInfo = function (front,back) {
      fs.writeFile("basic.json", JSON.stringify(BasicCards));
 }
 
-BasicCard.readInfo = function (cb) {
+BasicCard.readInfo = function () {
     // exports.error.bool = false;
+    var truthy = true;
     if (BasicCards.length > 0) { 
         fs.readFile("basic.json","utf8", function(err,data) {
             if(err){
-                // console.log(err);
+                console.log(err);
             }
             var temp = JSON.parse(data);
             //set a value equal to the length of the dataset
@@ -47,9 +48,12 @@ BasicCard.readInfo = function (cb) {
                 },1000) 
             }
         })
+        return truthy = true;
     } else {
+        
         console.log("-----------------------" + "\n" +"*****you haven't written any cards yet! returning to main menu.*****" + "\n" + "-----------------------");
-        return admin.mainTree();
+        return truthy = false;
+        // admin.mainTree();
     }
 }
 
