@@ -20,7 +20,7 @@ ClozeCard.prototype.checkInfo = function() {
     this.result = this.temp.match(this.tempCloze);
 
     if (this.result === null || this.tempCloze.length < 1) {
-        console.log(count)
+        // console.log(count)
         console.log("---------------" + "\n"+ `*****ERROR: your cloze statement, ${this.tempCloze} is not included in the full text*****` + "\n" + "---------------");
         return truthy = false;
     } else {
