@@ -123,6 +123,9 @@ function cardReader() {
                             setTimeout(function () {
                                 return cardReader();
                             },1000);
+                        } else {
+                            console.log("-------------------" + "\n" + `*****did you provide an answer?*****` + "\n" + "-------------------")
+                            cardReader();
                         }
                     });
                 },1000);
