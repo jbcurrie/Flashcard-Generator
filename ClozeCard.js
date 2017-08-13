@@ -14,15 +14,18 @@ var ClozeCard = function(cloze,full) {
 }
 
 ClozeCard.prototype.checkInfo = function() {
+    var truthy = true;
     this.temp = this.full.trim();
     this.tempCloze = this.cloze.trim();
     this.result = this.temp.match(this.tempCloze);
 
     if (this.result === null || this.tempCloze.length < 1) {
         console.log(count)
-        return console.log("---------------" + "\n"+ `*****ERROR: your cloze statement, ${this.tempCloze} is not included in the full text*****` + "\n" + "---------------");
+        console.log("---------------" + "\n"+ `*****ERROR: your cloze statement, ${this.tempCloze} is not included in the full text*****` + "\n" + "---------------");
+        return truthy = false;
     } else {
         this.writeInfo();
+        return truthy = true;
     }
 }
 

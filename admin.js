@@ -59,6 +59,7 @@ function cardSelection() {
                     debugger;
                     var createCard = new BasicCard(front,back);
                     createCard.writeInfo(front,back);
+                    //insert truthy condition for cloze and basic card reader function. if true increment, else don't
                     ques++;
                     cardSelection();
                 })
@@ -83,8 +84,9 @@ function cardSelection() {
                         var cloze = card.cloze;
                     }
                     var createCard = new ClozeCard(cloze,full);
-                    createCard.checkInfo(); 
-                    ques++;
+                    if (createCard.checkInfo() === true) {
+                        ques++;
+                    } 
                     cardSelection();
                 })
             }
