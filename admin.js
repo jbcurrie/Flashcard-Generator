@@ -9,19 +9,18 @@ var ClozeCard = require("./ClozeCard.js");
 var ques = 0;
 
 module.exports.mainTree = function() {
-    //inquirer runs to show options for the user, read or write
     inquirer.prompt([
         {
             type:"list",
             name:"choice",
-            message:"What would you like to do?",
+            message:"\n" + "What would you like to do?",
             choices:["Read my cards","Write Cards"]
         }
     ]).then(function(result){
         if(result.choice === "Read my cards") {
-            return cardReader();
+            cardReader();
         } else if (result.choice === "Write Cards") {
-            return cardSelection();
+            cardSelection();
         }
     })
 }
@@ -38,43 +37,44 @@ function cardSelection() {
             }
         ]).then(function(selection) {
             if (selection.chooseCard === "basic card") {
-                    inquirer.prompt([
-                        {
-                        type: "input",
-                        name: "front",
-                        message: "What displays on the front of your card?"
-                        },
-                        {
-                        type: "input",
-                        name: "back",
-                        message: "What displays on the back of your card?"
-                        }
-                ]).then(function (card) {
+                inquirer.prompt([
+                    {
+                    type: "input",
+                    name: "front",
+                    message: "What displays on the front of your card?"
+                    },
+                    {
+                    type: "input",
+                    name: "back",
+                    message: "What displays on the back of your card?"
+                    }
+                ]).then(function(card) {
                     if (card.front !== null) {
                         var front = card.front
                     }
                     if (card.back !== null) {
                         var back = card.back
                     }
-                    debugger;
                     var createCard = new BasicCard(front,back);
-                    createCard.writeInfo(front,back);
-                    //insert truthy condition for cloze and basic card reader function. if true increment, else don't
-                    ques++;
-                    cardSelection();
+                    createCard.writeInfo(front,back, function(truthy) {
+                        if (truthy) {
+                            ques++;
+                        }
+                        cardSelection();
+                    });
                 })
             };
             if (selection.chooseCard === "cloze card") {
                 inquirer.prompt([
                     {
-                        type:"input",
-                        name:"full",
-                        message:"what is the full text of your cloze card?"
+                    type:"input",
+                    name:"full",
+                    message:"what is the full text of your cloze card?"
                     },
                     {
-                        type:"input",
-                        name:"cloze",
-                        message:"what is the cloze text to be removed?"
+                    type:"input",
+                    name:"cloze",
+                    message:"what is the cloze text to be removed?"
                     }
                 ]).then(function(card) {
                     if (card.full !== null) {
@@ -84,10 +84,12 @@ function cardSelection() {
                         var cloze = card.cloze;
                     }
                     var createCard = new ClozeCard(cloze,full);
-                    if (createCard.checkInfo() === true) {
-                        ques++;
-                    } 
-                    cardSelection();
+                    createCard.checkInfo(function(truthy) {
+                        if (truthy) {
+                            ques++;
+                        }
+                        cardSelection();
+                    })    
                 })
             }
             if(selection.chooseCard === "done writing cards") {
@@ -102,58 +104,51 @@ function cardReader() {
         {
         type: "list",
         name: "card",
-        message: "\n" + "Which flashcard style would you like to review?",
+        message: "Which flashcard style would you like to review?" + "\n",
         choices:["basic card","cloze card","main menu"]   
         }
     ]).then(function(read) { 
         if (read.card === "basic card") {
-            // var run
-            if (BasicCard.readInfo() === true) {
-
-                setTimeout(function () {    
-                    inquirer.prompt([
-                        {
-                            type:"input",
-                            name:"answer",
-                            message:"Enter your answer:"
-                        }
-                    ]).then(function(response) {
-                        if (response.answer) { 
-                            BasicCard.readInfo()
-                            setTimeout(function () {
-                                return cardReader();
-                            },1000);
-                        } else {
-                            console.log("-------------------" + "\n" + `*****did you provide an answer?*****` + "\n" + "-------------------")
+            BasicCard.readInfo(function() { 
+                inquirer.prompt([
+                    {
+                    type:"input",
+                    name:"answer",
+                    message:"Enter your answer:" + "\n"
+                    }
+                ]).then(function(response) {
+                    debugger;
+                    if (response.answer) { 
+                        BasicCard.readInfo(function() {
                             cardReader();
-                        }
-                    });
-                },1000);
-            } else {
-                module.exports.mainTree();
-            }
+                        })
+
+                    } else {
+                        console.log("-------------------" + "\n" + `*****did you provide an answer?*****` + "\n" + "-------------------")
+                        cardReader();
+                    }
+                });
+            })      
         }
         if (read.card === "cloze card") { 
-            if (ClozeCard.readInfo() === true) {
-                setTimeout(function () {
-                    inquirer.prompt([
-                        {
-                            type:"input",
-                            name:"answer",
-                            message:"Enter your answer:"
-                        }
-                    ]).then(function(response) {
-                        if (response.answer) {
-                            ClozeCard.readInfo();
-                            setTimeout(function () {
-                                return cardReader();
-                            },1000);
-                        }
-                    })
-                },1000);
-            } else {
-                module.exports.mainTree();
-            }
+            ClozeCard.readInfo(function () {
+                inquirer.prompt([
+                    {
+                    type:"input",
+                    name:"answer",
+                    message:"Enter your answer:" + "\n"
+                    }
+                ]).then(function(response) {
+                    if (response.answer) {
+                        ClozeCard.readInfo(function() {
+                            cardReader();
+                        })
+                    } else {
+                        console.log("-------------------" + "\n" + `*****did you provide an answer?*****` + "\n" + "-------------------")
+                        cardReader();
+                    }
+                })
+            });
         };
         if (read.card === "main menu") {
             module.exports.mainTree();
